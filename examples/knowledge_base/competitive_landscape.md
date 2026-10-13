@@ -1,0 +1,2 @@
+# Solution Principles
+Choose tools that fit existing systems and let the team change providers later. A small, working pilot is easier to assess than a broad platform rollout. Compare options on usefulness, security, cost and ease of maintenance.

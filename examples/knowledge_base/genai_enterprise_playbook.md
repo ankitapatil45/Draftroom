@@ -1,0 +1,2 @@
+# AI Pilot Notes
+For a first AI pilot, choose one repeated task and agree on a simple measure of success. Keep a person in the review loop, use approved information, and record where answers come from. Expand only after the pilot shows clear value.

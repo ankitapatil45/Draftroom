@@ -1,0 +1,2 @@
+# Project Checkpoints
+Review progress every two weeks with the project owner. Track results against the agreed starting point, test changes before release, and complete a security review before using production data. Keep decisions and sources easy to audit.

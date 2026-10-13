@@ -1,0 +1,25 @@
+{"t": 1791857319.8605838, "agent": "supervisor", "action": "plan", "ms": 0.0, "detail": {"intent": "create", "outputs": ["pptx", "docx"], "n_slides": 12, "topic": "latest Generative AI trends", "needs_web": true, "direction": null}}
+{"t": 1791857319.9358184, "agent": "template_analyst", "action": "analyze", "ms": 71.9, "detail": {"file": "Company_Proposal.docx", "kind": "docx", "tone": "Formal register, neutral/third person, short, punchy sentences (~12.8 words).", "headings": ["Executive Summary", "Project Goals", "Proposed Plan", "Schedule and Team", "Next Steps", "Phase one outcomes"]}}
+{"t": 1791857319.9776952, "agent": "template_analyst", "action": "analyze", "ms": 40.3, "detail": {"file": "Company_Template.pptx", "kind": "pptx", "tone": "Formal register, second person (you), short, punchy sentences (~12.0 words).", "headings": []}}
+{"t": 1791857319.9833283, "agent": "web_research", "action": "search", "ms": 2.3, "detail": {"queries": ["latest Generative AI trends", "latest Generative AI trends latest trends 2026", "latest Generative AI trends market statistics"], "sources": []}}
+{"t": 1791857319.9871464, "agent": "rag", "action": "retrieve", "ms": 2.8, "detail": {"query": "latest Generative AI trends", "backend": "local", "sources": [1, 2], "scores": [0.06, 0.053]}}
+{"t": 1791857319.9896133, "agent": "doc_writer", "action": "write", "ms": 0.5, "detail": {"topic": "latest Generative AI trends", "n_sources": 2, "mode": "fallback"}}
+{"t": 1791857319.9924538, "agent": "deck_writer", "action": "write", "ms": 0.6, "detail": {"topic": "latest Generative AI trends", "slides": 12, "mode": "fallback"}}
+{"t": 1791857319.9939153, "agent": "validator", "action": "validate", "ms": 0.2, "detail": {"passed": true, "n_issues": 0}}
+{"t": 1791857319.995869, "agent": "validator", "action": "validate", "ms": 0.2, "detail": {"passed": true, "n_issues": 0}}
+{"t": 1791857320.191163, "agent": "renderer", "action": "render", "ms": 189.8, "detail": {"version": 1, "files": {"docx": "document.docx", "pptx": "presentation.pptx"}}}
+{"t": 1791857320.197904, "agent": "supervisor", "action": "plan", "ms": 0.0, "detail": {"intent": "edit", "outputs": ["docx", "pptx"], "n_slides": null, "topic": "Add an executive summary", "needs_web": false, "direction": null}}
+{"t": 1791857320.2011824, "agent": "editor", "action": "plan_edit", "ms": 1.3, "detail": {"instruction": "Add an executive summary.", "mode": "fallback"}}
+{"t": 1791857320.2023966, "agent": "validator", "action": "validate", "ms": 0.2, "detail": {"passed": true, "n_issues": 1}}
+{"t": 1791857320.2048416, "agent": "validator", "action": "validate", "ms": 0.4, "detail": {"passed": true, "n_issues": 1}}
+{"t": 1791857320.3841546, "agent": "renderer", "action": "render", "ms": 174.3, "detail": {"version": 2, "files": {"docx": "document.docx", "pptx": "presentation.pptx"}}}
+{"t": 1791857320.3909442, "agent": "supervisor", "action": "plan", "ms": 0.0, "detail": {"intent": "edit", "outputs": ["docx", "pptx"], "n_slides": null, "topic": "Add a competitive analysis section", "needs_web": false, "direction": null}}
+{"t": 1791857320.3937, "agent": "editor", "action": "plan_edit", "ms": 0.8, "detail": {"instruction": "Add a competitive analysis section.", "mode": "fallback"}}
+{"t": 1791857320.3949575, "agent": "validator", "action": "validate", "ms": 0.2, "detail": {"passed": true, "n_issues": 1}}
+{"t": 1791857320.3966122, "agent": "validator", "action": "validate", "ms": 0.2, "detail": {"passed": true, "n_issues": 1}}
+{"t": 1791857320.5952454, "agent": "renderer", "action": "render", "ms": 194.7, "detail": {"version": 3, "files": {"docx": "document.docx", "pptx": "presentation.pptx"}}}
+{"t": 1791857320.6009314, "agent": "supervisor", "action": "plan", "ms": 0.0, "detail": {"intent": "edit", "outputs": ["pptx"], "n_slides": null, "topic": "Make the presentation more concise", "needs_web": false, "direction": null}}
+{"t": 1791857320.6033266, "agent": "editor", "action": "plan_edit", "ms": 0.6, "detail": {"instruction": "Make the presentation more concise.", "mode": "fallback"}}
+{"t": 1791857320.6058352, "agent": "validator", "action": "validate", "ms": 0.3, "detail": {"passed": true, "n_issues": 1}}
+{"t": 1791857320.6079688, "agent": "validator", "action": "validate", "ms": 0.2, "detail": {"passed": true, "n_issues": 1}}
+{"t": 1791857320.8213847, "agent": "renderer", "action": "render", "ms": 209.0, "detail": {"version": 4, "files": {"docx": "document.docx", "pptx": "presentation.pptx"}}}

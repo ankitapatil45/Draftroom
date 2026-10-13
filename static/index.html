@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Draftroom</title>
+<style>
+ body{font:15px system-ui,sans-serif;margin:0;display:grid;grid-template-columns:1fr 340px;height:100vh;background:#f5f6f8;color:#1b1f24}
+ main{display:flex;flex-direction:column;padding:16px;min-width:0}
+ #log{flex:1;overflow:auto;background:#fff;border:1px solid #dde;border-radius:8px;padding:12px}
+ .m{margin:8px 0;padding:8px 12px;border-radius:8px;white-space:pre-wrap}.u{background:#e6f0ff}.a{background:#f1f3f5}
+ form{display:flex;gap:8px;margin-top:10px}input[type=text]{flex:1;padding:10px;border:1px solid #ccd;border-radius:6px}
+ button{padding:10px 14px;border:0;border-radius:6px;background:#2b59c3;color:#fff;cursor:pointer}
+ aside{background:#fff;border-left:1px solid #dde;padding:16px;overflow:auto}h3{margin:14px 0 6px}
+ a{color:#2b59c3} small{color:#667} li{margin:4px 0}
+ @media(max-width:760px){body{height:auto;min-height:100vh;grid-template-columns:1fr}main{min-height:55vh}aside{border-left:0;border-top:1px solid #dde;overflow:visible}}
+</style></head><body>
+<main><h2>Draftroom</h2><div id="log" role="log" aria-live="polite"></div>
+ <form id="f"><input id="msg" type="text" aria-label="Request" placeholder="What would you like to create or change?" autocomplete="off"><button>Send</button></form></main>
+<aside>
+ <h3>Reference files</h3><input id="files" type="file" aria-label="Select reference files" multiple accept=".docx,.pdf,.pptx,.png,.jpg,.jpeg,.tif,.txt,.md"><button id="up" style="margin-top:6px">Upload</button>
+ <div id="ups"></div>
+ <h3>Project notes</h3><input id="kbf" type="file" aria-label="Select project notes" multiple accept=".docx,.pdf,.pptx,.png,.jpg,.jpeg,.tif,.tiff,.txt,.md"><button id="kbup" style="margin-top:6px">Add notes</button><div id="kbs"></div>
+ <h3>Versions</h3><ul id="vers"></ul>
+ <h3>Sources</h3><ol id="srcs"></ol>
+ <h3>Activity</h3><a id="tr" href="#">Download activity trace</a>
+</aside>
+<script>
+let sid; let apiKey=sessionStorage.getItem('draftroom_api_key')||sessionStorage.getItem('docgen_api_key')||''; const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const log=(t,c)=>{const d=document.createElement('div');d.className='m '+c;d.textContent=t;$('log').append(d);$('log').scrollTop=1e9;return d};
+async function api(p,o={}){const h=new Headers(o.headers||{});if(apiKey)h.set('X-API-Key',apiKey);const r=await fetch(p,{...o,headers:h});if(!r.ok)throw new Error(await r.text());return r.json()}
+function safeUrl(value){try{const u=new URL(value);return ['http:','https:'].includes(u.protocol)?u.href:''}catch{return ''}}
+async function init(){const health=await api('/api/health');if(health.auth_required&&!apiKey){apiKey=prompt('Enter the API key');if(!apiKey)throw new Error('API key is required')}if(apiKey){sessionStorage.setItem('draftroom_api_key',apiKey);sessionStorage.removeItem('docgen_api_key')}const saved=sessionStorage.getItem('draftroom_session_id');if(saved){try{await api(`/api/sessions/${saved}`);sid=saved;render({sources:[]});log('Session restored.','a');return}catch{sessionStorage.removeItem('draftroom_session_id')}}sid=(await api('/api/sessions',{method:'POST'})).session_id;sessionStorage.setItem('draftroom_session_id',sid)}
+function render(r){
+ api(`/api/sessions/${sid}/versions`).then(vs=>{$('vers').innerHTML=vs.map(v=>`<li><b>v${v.number}</b> <small>${esc(v.note.slice(0,50))}</small><br>`+
+  Object.keys(v.files).map(k=>`<a href="#" data-download="/api/sessions/${sid}/versions/${v.number}/download/${k}" data-name="${k}_v${v.number}.${k}">${k}</a>`).join(' · ')+`</li>`).join('')});
+ if(r.sources)$('srcs').innerHTML=r.sources.map(s=>{const url=safeUrl(s.url);return `<li>${url?`<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a>`:esc(s.title)} <small>(${esc(s.kind)})</small></li>`}).join('')}
+$('vers').onclick=async e=>{const a=e.target.closest('[data-download]');if(!a)return;e.preventDefault();try{const r=await fetch(a.dataset.download,{headers:apiKey?{'X-API-Key':apiKey}:{}});if(!r.ok)throw new Error(await r.text());const u=URL.createObjectURL(await r.blob());const d=document.createElement('a');d.href=u;d.download=a.dataset.name;d.click();URL.revokeObjectURL(u)}catch(x){log('Download failed: '+x.message,'a')}};
+$('tr').onclick=async e=>{e.preventDefault();try{const r=await api(`/api/sessions/${sid}/trace`);const b=new Blob([JSON.stringify(r,null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='trace.json';a.click();URL.revokeObjectURL(u)}catch(x){log('Trace unavailable: '+x.message,'a')}};
+$('up').onclick=async()=>{const fd=new FormData();for(const f of $('files').files)fd.append('files',f);const r=await api(`/api/sessions/${sid}/upload`,{method:'POST',body:fd});$('ups').innerHTML=r.uploaded.map(u=>`<small>✓ ${esc(u.name)} (${esc(u.kind)})</small>`).join('<br>')};
+$('kbup').onclick=async()=>{const fd=new FormData();for(const f of $('kbf').files)fd.append('files',f);const r=await api('/api/kb/ingest',{method:'POST',body:fd});$('kbs').innerHTML=`<small>${r.chunks_ingested} chunks → ${esc(r.backend)}</small>`};
+$('f').onsubmit=async e=>{e.preventDefault();const m=$('msg').value.trim();if(!m)return;$('msg').value='';log(m,'u');const w=log('Agents working…','a');
+ try{const r=await api(`/api/sessions/${sid}/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:m})});w.textContent=r.reply;render(r)}catch(x){w.textContent='Error: '+x.message}};
+init().catch(e=>log('Could not start: '+e.message,'a'));
+</script></body></html>
